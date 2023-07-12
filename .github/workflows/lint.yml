@@ -1,0 +1,26 @@
+name: Lint
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Setup and install tools via aftman
+        uses: ok-nick/setup-aftman@v0.3.0
+      - name: Lint using selene
+        run: |
+          selene ./src
+      - name: Generate sourcemap via Rojo
+        run: |
+          rojo sourcemap default.project.json > sourcemap.json
+      - name: Fetch luau-lsp Roblox type definitions
+        run: |
+          curl https://raw.githubusercontent.com/JohnnyMorganz/luau-lsp/main/scripts/globalTypes.d.lua -o globalTypes.d.lua
+      - name: Lint using luau-lsp
+        run: |
+          luau-lsp analyze --formatter=plain --sourcemap=sourcemap.json --definitions=globalTypes.d.lua --base-luaurc=./src/.luaurc ./src
