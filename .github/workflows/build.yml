@@ -12,10 +12,8 @@ jobs:
     steps:
       - name: Checkout repository and submodules
         uses: actions/checkout@v2
-      - name: Setup Foreman and install tools
-        uses: Roblox/setup-foreman@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup and install tools via aftman
+        uses: ok-nick/setup-aftman@v0.3.0
       - name: Build using Rojo
         run: |
           rojo build default.project.json --output Loggy.rbxm
